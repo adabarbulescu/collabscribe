@@ -1,0 +1,23 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+.claude/
+ROADMAP.md
+NLPtask.md
+
+# OS
+.DS_Store
+Thumbs.db
