@@ -1,8 +1,13 @@
 # Collabscribe
 
-Collabscribe is a real-time collaborative Markdown editor with live math rendering, version history, and built-in NLP analytics.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" alt="Python 3.12">
+  <img src="https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" alt="Docker Compose">
+</p>
 
-It is designed as a portfolio project that combines real-time systems, backend API design, persistence, and text-analysis features in one product.
+Collabscribe is a real-time collaborative Markdown editor with live math rendering, version history, and built-in NLP analytics.
 
 ## Highlights
 
@@ -35,10 +40,6 @@ docker compose up --build -d
 
 Open `http://localhost:8000`.
 
-## Environment
-
-The repo includes `.env.example` with the required database and app settings.
-
 ## Testing
 
 ```bash
@@ -49,19 +50,7 @@ pytest backend/tests -q
 - Versioning tests require a local PostgreSQL test database at `postgresql://postgres:postgres@localhost:5432/collabscribe_test`.
 - If that database is unavailable, those tests are skipped.
 
-## Project Structure
-
-```text
-.
-|-- backend
-|-- frontend
-|-- docker-compose.yml
-|-- Dockerfile
-`-- README.md
-```
-
 ## Notes
 
 - Analytics are currently tuned for English text.
-- The frontend is implemented as a single large HTML file.
 - API docs are available at `/docs` when the app is running.
