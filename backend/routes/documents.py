@@ -13,8 +13,17 @@ logger = logging.getLogger("collabscribe.routes.documents")
 
 router = APIRouter()
 
-# Path to the frontend HTML file
-FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+LEGACY_FRONTEND_DIR = PROJECT_ROOT / "frontend"
+REACT_FRONTEND_DIST_DIR = PROJECT_ROOT / "frontend-app" / "dist"
+
+
+def _get_frontend_entrypoint() -> Path:
+    """Prefer the built React app when it exists; otherwise fall back to the legacy frontend."""
+    react_index = REACT_FRONTEND_DIST_DIR / "index.html"
+    if react_index.exists():
+        return react_index
+    return LEGACY_FRONTEND_DIR / "index.html"
 
 
 @router.get("/")
@@ -42,4 +51,4 @@ async def serve_doc(doc_id: str) -> FileResponse:
         Frontend HTML file.
     """
     logger.debug(f"Serving document: {doc_id}")
-    return FileResponse(FRONTEND_DIR / "index.html", media_type="text/html")
+    return FileResponse(_get_frontend_entrypoint(), media_type="text/html")

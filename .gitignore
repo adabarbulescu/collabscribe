@@ -12,6 +12,8 @@ venv/
 *.egg-info/
 dist/
 build/
+frontend-app/node_modules/
+frontend-app/dist/
 
 # IDE
 .vscode/

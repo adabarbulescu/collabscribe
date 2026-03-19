@@ -36,7 +36,7 @@ async def test_db_pool():
             max_size=5,
             command_timeout=60,
         )
-    except OSError as exc:
+    except Exception as exc:
         pytest.skip(f"PostgreSQL test database unavailable at {TEST_DSN}: {exc}")
     try:
         yield pool

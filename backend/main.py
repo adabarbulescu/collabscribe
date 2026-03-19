@@ -8,9 +8,11 @@ from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from database import close_pool, create_pool
 from init_db import create_tables
@@ -23,6 +25,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger("collabscribe.main")
+FRONTEND_ASSETS_DIR = Path(__file__).resolve().parent.parent / "frontend-app" / "dist" / "assets"
 
 
 @asynccontextmanager
@@ -56,6 +59,12 @@ app = FastAPI(
     title="Collabscribe",
     version="1.0.0",
     lifespan=lifespan,
+)
+
+app.mount(
+    "/assets",
+    StaticFiles(directory=str(FRONTEND_ASSETS_DIR), check_dir=False),
+    name="frontend-assets",
 )
 
 app.add_middleware(
