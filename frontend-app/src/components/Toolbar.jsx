@@ -5,10 +5,13 @@ const actions = [
   "Export PDF"
 ];
 
-export default function Toolbar({ sidebarOpen, onToggleSidebar }) {
+export default function Toolbar({ documentId, sidebarOpen, onToggleSidebar }) {
   return (
     <header className="toolbar" role="toolbar" aria-label="Document actions">
-      <span className="toolbar__title">Collabscribe</span>
+      <div className="toolbar__identity">
+        <span className="toolbar__title">Collabscribe</span>
+        <span className="toolbar__docid">doc/{documentId}</span>
+      </div>
 
       <span className="toolbar__meta" aria-live="polite">
         1 user

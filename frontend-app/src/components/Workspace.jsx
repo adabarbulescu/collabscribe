@@ -1,4 +1,9 @@
-export default function Workspace({ mobileView }) {
+export default function Workspace({
+  content,
+  mobileView,
+  onChangeContent,
+  previewHtml
+}) {
   const editorHidden = mobileView === "preview";
   const previewHidden = mobileView === "editor";
 
@@ -11,15 +16,19 @@ export default function Workspace({ mobileView }) {
       >
         <div className="pane__header">
           <span>Editor</span>
-          <span className="pane__badge">Migration target</span>
+          <span className="pane__badge">Textarea for now</span>
         </div>
         <div className="pane__body pane__body--editor">
-          <div className="editor-placeholder">
-            <p>Monaco, Yjs, and versioning hooks move here in the next slice.</p>
-            <pre>
-              <code>{`# Collabscribe\n\nReact shell is ready.\n\n- editor parity pending\n- preview parity pending`}</code>
-            </pre>
-          </div>
+          <label className="sr-only" htmlFor="markdown-editor">
+            Markdown editor
+          </label>
+          <textarea
+            id="markdown-editor"
+            className="editor-textarea"
+            value={content}
+            onChange={(event) => onChangeContent(event.target.value)}
+            spellCheck={false}
+          />
         </div>
       </section>
 
@@ -31,21 +40,13 @@ export default function Workspace({ mobileView }) {
       >
         <div className="pane__header">
           <span>Preview</span>
-          <span className="pane__badge pane__badge--muted">Static placeholder</span>
+          <span className="pane__badge pane__badge--muted">Rendered in React</span>
         </div>
         <div className="pane__body">
-          <article className="preview-card">
-            <h1>Preview parity comes next</h1>
-            <p>
-              This step only moves the shell into React. Markdown rendering,
-              KaTeX, and synchronization are intentionally not wired yet.
-            </p>
-            <ul>
-              <li>Shared workspace layout is now componentized.</li>
-              <li>Toolbar and sidebar controls are in React state.</li>
-              <li>Legacy frontend remains the runtime fallback.</li>
-            </ul>
-          </article>
+          <article
+            className="preview-card preview-markdown"
+            dangerouslySetInnerHTML={{ __html: previewHtml }}
+          />
         </div>
       </section>
     </main>
