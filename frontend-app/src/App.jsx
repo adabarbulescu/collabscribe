@@ -31,13 +31,13 @@ $$
 \\int_0^1 x^2 \\, dx = \\frac{1}{3}
 $$
 
-## React migration progress
+## Draft with context
 
-- App shell migrated
-- Editor and preview migrated
-- Versioning and session status are wired to the backend
-- Monaco and Yjs collaboration are now in React
-- Analytics, insights, and compare are now in React
+Collabscribe keeps writing, collaboration, and analytics in one place so you can draft, revise, and compare versions without leaving the editor.
+
+- Write in Markdown
+- Collaborate live
+- Review insights as the document evolves
 `;
 
 export default function App() {
@@ -92,7 +92,7 @@ export default function App() {
 
       <MobileViewToggle currentView={mobileView} onChange={setMobileView} />
 
-      <div className="workspace-frame">
+      <div className={sidebarOpen ? "workspace-frame is-sidebar-open" : "workspace-frame"}>
         <Workspace
           content={content}
           docId={docId}

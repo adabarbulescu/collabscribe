@@ -40,6 +40,7 @@ function MetricCard({ label, value, subvalue }) {
 function Placeholder({ children }) {
   return (
     <div className="analytics-placeholder-card">
+      <span className="analytics-placeholder-card__eyebrow">Writer guidance</span>
       <p>{children}</p>
     </div>
   );
@@ -520,6 +521,7 @@ export default function AnalyticsSidebar({
         <div>
           <p className="analytics-sidebar__eyebrow">Analytics connected</p>
           <h2>Analytics</h2>
+          <p className="analytics-sidebar__subtitle">See what changed, how it reads, and where the draft is heading.</p>
         </div>
         <button type="button" className="analytics-sidebar__close" onClick={onClose}>
           Close
