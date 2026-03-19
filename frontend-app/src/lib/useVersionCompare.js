@@ -43,9 +43,19 @@ export function useVersionCompare({ docId, active, onToast }) {
         setVersions(nextVersions);
 
         if (nextVersions.length >= 2) {
-          const latest = nextVersions[nextVersions.length - 1].version_number;
-          const previous = nextVersions[nextVersions.length - 2].version_number;
-          setSelectedVersions({ versionA: previous, versionB: latest });
+          setSelectedVersions((current) => {
+            const available = new Set(nextVersions.map((version) => version.version_number));
+            const latest = nextVersions[nextVersions.length - 1].version_number;
+            const previous = nextVersions[nextVersions.length - 2].version_number;
+            const currentA = available.has(current.versionA) ? current.versionA : previous;
+            let currentB = available.has(current.versionB) ? current.versionB : latest;
+
+            if (currentA === currentB) {
+              currentB = currentB === latest ? previous : latest;
+            }
+
+            return { versionA: currentA, versionB: currentB };
+          });
         } else {
           setSelectedVersions({ versionA: "", versionB: "" });
           setComparison(null);
@@ -67,6 +77,10 @@ export function useVersionCompare({ docId, active, onToast }) {
 
   useEffect(() => {
     if (!active || !docId || !selectedVersions.versionA || !selectedVersions.versionB) {
+      return undefined;
+    }
+
+    if (selectedVersions.versionA === selectedVersions.versionB) {
       return undefined;
     }
 
@@ -108,7 +122,28 @@ export function useVersionCompare({ docId, active, onToast }) {
     error,
     isLoading: isLoadingVersions || isLoadingComparison,
     selectedVersions,
-    setSelectedVersions,
+    setSelectedVersions: (next) => {
+      setSelectedVersions((current) => {
+        const resolved = typeof next === "function" ? next(current) : next;
+
+        if (!resolved.versionA || !resolved.versionB) {
+          return resolved;
+        }
+
+        if (resolved.versionA !== resolved.versionB) {
+          return resolved;
+        }
+
+        const alternatives = versions
+          .map((version) => version.version_number)
+          .filter((versionNumber) => versionNumber !== resolved.versionA);
+
+        return {
+          versionA: resolved.versionA,
+          versionB: alternatives[alternatives.length - 1] ?? ""
+        };
+      });
+    },
     versions
   };
 }
