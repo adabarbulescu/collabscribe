@@ -10,7 +10,7 @@ from uuid import UUID, uuid5, NAMESPACE_URL
 
 import asyncpg
 
-logger = logging.getLogger("collab.services.versioning")
+logger = logging.getLogger("collabscribe.services.versioning")
 
 
 class DocumentNotFoundError(Exception):

@@ -20,7 +20,7 @@ from uuid import UUID, uuid5, NAMESPACE_URL
 
 import asyncpg
 
-logger = logging.getLogger("collab.services.analytics")
+logger = logging.getLogger("collabscribe.services.analytics")
 
 # In-memory cache: content_hash → analytics result dict
 _analytics_cache: dict[str, dict] = {}

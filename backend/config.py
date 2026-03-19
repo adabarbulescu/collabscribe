@@ -10,9 +10,9 @@ class Settings(BaseSettings):
     """Application configuration settings."""
 
     # PostgreSQL
-    postgres_user: str = "collab_user"
+    postgres_user: str = "collabscribe_user"
     postgres_password: str = "changeme_strong_password"
-    postgres_db: str = "collab_editor"
+    postgres_db: str = "collabscribe"
     postgres_host: str = "localhost"
     postgres_port: int = 5432
 

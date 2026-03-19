@@ -5,6 +5,8 @@
 __pycache__/
 *.pyc
 *.pyo
+.pytest_cache/
+backend/pytest-cache-files-*/
 venv/
 .venv/
 *.egg-info/
@@ -14,9 +16,8 @@ build/
 # IDE
 .vscode/
 .idea/
-.claude/
 ROADMAP.md
-NLPtask.md
+
 
 # OS
 .DS_Store

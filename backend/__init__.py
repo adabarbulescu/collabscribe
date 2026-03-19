@@ -1,5 +1,3 @@
-"""
-Collaborative Markdown Editor backend package.
-"""
+"""Collabscribe backend package."""
 
 __version__ = "1.0.0"

@@ -9,7 +9,7 @@ from pathlib import Path
 from fastapi import APIRouter
 from fastapi.responses import FileResponse, RedirectResponse
 
-logger = logging.getLogger("collab.routes.documents")
+logger = logging.getLogger("collabscribe.routes.documents")
 
 router = APIRouter()
 

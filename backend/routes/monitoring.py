@@ -1,94 +1,31 @@
-"""
-Monitoring endpoints for background tasks and snapshot scheduler.
-
-Provides visibility into snapshot status, operation counts, and
-document version tracking for analytics and debugging.
-"""
+"""Monitoring endpoints for snapshot status and operation tracking."""
 
 import logging
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 
 from tasks import get_snapshot_scheduler
 from utils import get_tracking_manager
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("collabscribe.routes.monitoring")
 
 router = APIRouter(prefix="/api/admin", tags=["monitoring"])
 
 
 @router.get("/scheduler/status")
 async def get_scheduler_status():
-    """
-    Get snapshot scheduler status and monitored documents.
-    
-    Returns comprehensive status including:
-    - Scheduler running state
-    - Poll interval configuration
-    - Count of documents being tracked
-    - Count of documents exceeding thresholds
-    - Detailed status per document (operations, timing)
-    
-    **Response:**
-    ```json
-    {
-        "is_running": true,
-        "poll_interval": 60,
-        "documents_tracked": 5,
-        "documents_needing_snapshot": 2,
-        "documents_needing_snapshot_list": ["doc_abc", "doc_def"],
-        "tracked_documents": {
-            "doc_abc": {
-                "operations_since_snapshot": 52,
-                "session_operations": 156,
-                "operation_threshold": 50,
-                "time_threshold_seconds": 300,
-                "should_snapshot": true,
-                "time_since_snapshot": 45.3,
-                "time_since_last_operation": 2.1
-            }
-        },
-        "timestamp": "2026-02-18T10:30:45.123456"
-    }
-    ```
-    """
+    """Return scheduler status and the current tracked-document summary."""
     try:
         scheduler = await get_snapshot_scheduler()
         status = await scheduler.get_scheduler_status()
         return status
-    except Exception as e:
-        logger.error(f"Failed to get scheduler status: {e}")
+    except Exception as exc:
+        logger.error("Failed to get scheduler status: %s", exc)
         raise HTTPException(status_code=500, detail="Failed to get scheduler status")
 
 
 @router.get("/tracking/document/{doc_id}")
 async def get_document_tracking_status(doc_id: str):
-    """
-    Get operation tracking status for a specific document.
-    
-    Shows operation count since last snapshot, timing info,
-    and whether snapshot threshold is exceeded.
-    
-    **Path Parameters:**
-    - `doc_id`: Document identifier
-    
-    **Response:**
-    ```json
-    {
-        "doc_id": "abc123",
-        "operations_since_snapshot": 35,
-        "session_operations": 128,
-        "operation_threshold": 50,
-        "time_threshold_seconds": 300,
-        "time_since_snapshot": 120.5,
-        "time_since_last_operation": 3.2,
-        "should_snapshot": false,
-        "last_operation_time": "2026-02-18T10:29:45.123456",
-        "last_snapshot_time": "2026-02-18T10:26:45.987654"
-    }
-    ```
-    
-    **Returns 404 if document not found (no tracking data)**
-    """
+    """Return operation-tracking status for one document."""
     tracking_manager = get_tracking_manager()
     status = tracking_manager.get_tracker_status(doc_id)
     
@@ -100,53 +37,14 @@ async def get_document_tracking_status(doc_id: str):
 
 @router.get("/tracking/all")
 async def get_all_tracking_status():
-    """
-    Get operation tracking status for all documents.
-    
-    Returns dictionary mapping each document ID to its tracking status.
-    Useful for monitoring dashboard or analytics.
-    
-    **Response:**
-    ```json
-    {
-        "doc_abc": {
-            "operations_since_snapshot": 35,
-            "session_operations": 128,
-            ...
-        },
-        "doc_def": {
-            "operations_since_snapshot": 52,
-            "session_operations": 256,
-            ...
-        }
-    }
-    ```
-    """
+    """Return operation-tracking status for all tracked documents."""
     tracking_manager = get_tracking_manager()
     return tracking_manager.get_all_tracker_statuses()
 
 
 @router.post("/tracking/snapshot/{doc_id}")
 async def trigger_snapshot_manual(doc_id: str):
-    """
-    Manually trigger a snapshot for a specific document.
-    
-    Useful for testing or forcing snapshots outside normal thresholds.
-    
-    **Path Parameters:**
-    - `doc_id`: Document identifier
-    
-    **Response:**
-    ```json
-    {
-        "doc_id": "abc123",
-        "status": "snapshot_triggered",
-        "message": "Manual snapshot triggered for doc_abc"
-    }
-    ```
-    
-    **Returns 404 if document not found**
-    """
+    """Create a snapshot immediately for a tracked document."""
     try:
         tracking_manager = get_tracking_manager()
         status = tracking_manager.get_tracker_status(doc_id)
@@ -154,8 +52,6 @@ async def trigger_snapshot_manual(doc_id: str):
         if not status:
             raise HTTPException(status_code=404, detail=f"Document not tracked: {doc_id}")
         
-        # Reset thresholds to trigger snapshot on next scheduler poll
-        # This forces snapshot by resetting operation count
         scheduler = await get_snapshot_scheduler()
         await scheduler._create_snapshot(doc_id)
         
@@ -166,39 +62,14 @@ async def trigger_snapshot_manual(doc_id: str):
         }
     except HTTPException:
         raise
-    except Exception as e:
-        logger.error(f"Failed to trigger manual snapshot for {doc_id}: {e}")
+    except Exception as exc:
+        logger.error("Failed to trigger manual snapshot for %s: %s", doc_id, exc)
         raise HTTPException(status_code=500, detail="Failed to trigger snapshot")
 
 
 @router.get("/tracking/stats")
 async def get_tracking_statistics():
-    """
-    Get aggregate statistics about document tracking.
-    
-    Provides high-level metrics about active documents,
-    operation rates, and snapshot activity.
-    
-    **Response:**
-    ```json
-    {
-        "total_documents_tracked": 8,
-        "documents_needing_snapshot": 3,
-        "total_operations_recorded": 1250,
-        "average_operations_per_document": 156.25,
-        "documents_exceeding_operation_threshold": 3,
-        "documents_exceeding_time_threshold": 1,
-        "most_active_document": {
-            "doc_id": "doc_abc",
-            "operations": 256
-        },
-        "least_active_document": {
-            "doc_id": "doc_xyz",
-            "operations": 5
-        }
-    }
-    ```
-    """
+    """Return aggregate statistics for all tracked documents."""
     tracking_manager = get_tracking_manager()
     all_statuses = tracking_manager.get_all_tracker_statuses()
     

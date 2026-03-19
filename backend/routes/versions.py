@@ -19,7 +19,7 @@ from models import (
 )
 from services import VersioningService, DocumentNotFoundError
 
-logger = logging.getLogger("collab.routes.versions")
+logger = logging.getLogger("collabscribe.routes.versions")
 
 router = APIRouter(prefix="/api/documents", tags=["versions"])
 
@@ -60,22 +60,7 @@ async def save_version(
         VersionSaveResponse with version metadata
 
     Raises:
-        HTTPException: If save fails (DB error, validation error, etc.)
-
-    Example:
-        POST /api/documents/abc123/versions
-        {
-            "content": "# Hello World\n\nThis is my document."
-        }
-
-        200 OK
-        {
-            "version_id": "550e8400-e29b-41d4-a716-446655440000",
-            "document_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-            "version_number": 1,
-            "created_at": "2026-02-18T20:15:30.123Z",
-            "message": "Version saved successfully"
-        }
+        HTTPException: If save fails.
     """
     try:
         logger.info(
@@ -154,27 +139,7 @@ async def get_version_history(
         VersionHistoryResponse with paginated version list
 
     Raises:
-        HTTPException: If document not found or query fails
-
-    Example:
-        GET /api/documents/abc123/versions?page=1&page_size=20
-
-        200 OK
-        {
-            "versions": [
-                {
-                    "id": "...",
-                    "document_id": "...",
-                    "version_number": 5,
-                    "created_at": "2026-02-18T20:15:30.123Z"
-                },
-                ...
-            ],
-            "total": 45,
-            "page": 1,
-            "page_size": 20,
-            "total_pages": 3
-        }
+        HTTPException: If document lookup or pagination fails.
     """
     try:
         logger.debug(f"Retrieving version history: doc_id={doc_id}, page={page}")
@@ -246,19 +211,7 @@ async def get_latest_version(
         Latest DocumentVersionResponse with full content
 
     Raises:
-        HTTPException: If document not found or no versions exist
-
-    Example:
-        GET /api/documents/abc123/versions/latest
-
-        200 OK
-        {
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "document_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-            "version_number": 5,
-            "created_at": "2026-02-18T20:15:30.123Z",
-            "content": "# Document content..."
-        }
+        HTTPException: If the document or version is missing.
     """
     try:
         logger.debug(f"Retrieving latest version: doc_id={doc_id}")
@@ -312,19 +265,7 @@ async def get_version_by_number(
         DocumentVersionResponse with requested version
 
     Raises:
-        HTTPException: If document/version not found or invalid parameters
-
-    Example:
-        GET /api/documents/abc123/versions/3
-
-        200 OK
-        {
-            "id": "550e8400-e29b-41d4-a716-446655440000",
-            "document_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
-            "version_number": 3,
-            "created_at": "2026-02-18T20:10:15.123Z",
-            "content": "# Document version 3 content..."
-        }
+        HTTPException: If the document or version is missing.
     """
     try:
         logger.debug(

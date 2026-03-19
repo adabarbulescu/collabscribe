@@ -5,7 +5,6 @@ Routes for version comparison and diff operations.
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -19,7 +18,7 @@ from models.diff import (
     VersionComparisonResponse,
 )
 
-logger = logging.getLogger("collab.routes.diff")
+logger = logging.getLogger("collabscribe.routes.diff")
 
 router = APIRouter(prefix="/api/diff", tags=["diff"])
 

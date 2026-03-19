@@ -11,7 +11,7 @@ import asyncpg
 
 from config import settings
 
-logger = logging.getLogger("collab.database")
+logger = logging.getLogger("collabscribe.database")
 
 # ---------------------------------------------------------------------------
 # Global connection pool (created at startup, closed at shutdown)

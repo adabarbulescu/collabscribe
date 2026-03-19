@@ -9,9 +9,9 @@ Used by WebSocket handlers to feed operation data to snapshot scheduler.
 
 import logging
 import time
+from dataclasses import dataclass
+from datetime import datetime
 from typing import Dict, Optional
-from datetime import datetime, timedelta
-from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,6 @@ class OperationTrackingManager:
     def __init__(self):
         """Initialize operation tracking manager."""
         self._trackers: Dict[str, DocumentOperationTracker] = {}
-        self._lock = None  # Could use asyncio.Lock if needed
         logger.info("Initialized OperationTrackingManager")
     
     def get_or_create_tracker(self, doc_id: str) -> DocumentOperationTracker:
@@ -198,7 +197,6 @@ class OperationTrackingManager:
             if tracker.operation_count >= tracker.OPERATION_THRESHOLD:
                 needing_snapshot.append(doc_id)
             elif tracker.last_snapshot_time:
-                import time
                 elapsed = time.time() - tracker.last_snapshot_time
                 if elapsed >= tracker.TIME_THRESHOLD_SECONDS and tracker.operation_count > 0:
                     needing_snapshot.append(doc_id)

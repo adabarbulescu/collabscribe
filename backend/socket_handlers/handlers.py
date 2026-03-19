@@ -4,7 +4,7 @@ Socket.IO event handlers for awareness, user count tracking, and Yjs CRDT sync.
 Features:
 - User awareness and cursor position tracking
 - Connected user counts per document
-- Yjs CRDT update relay with text extraction
+- Yjs CRDT update relay
 - Operation counting for auto-snapshot thresholds
 """
 
@@ -17,7 +17,7 @@ import socketio as socketio_lib
 
 from utils import get_yjs_parser, count_operations, get_tracking_manager
 
-logger = logging.getLogger("collab.socketio")
+logger = logging.getLogger("collabscribe.socketio")
 
 # Socket.IO server (async mode for uvicorn)
 sio = socketio_lib.AsyncServer(
@@ -44,7 +44,7 @@ async def connect(sid: str, environ: dict[str, Any]) -> None:
         sid: Socket.IO session ID.
         environ: ASGI environ dict.
     """
-    logger.info(f"Client connected: {sid}")
+    logger.info("Client connected: %s", sid)
 
 
 @sio.event
@@ -55,7 +55,7 @@ async def disconnect(sid: str) -> None:
     Args:
         sid: Socket.IO session ID.
     """
-    logger.info(f"Client disconnected: {sid}")
+    logger.info("Client disconnected: %s", sid)
     for doc_id, members in list(sio_rooms.items()):
         if sid in members:
             members.discard(sid)
@@ -89,7 +89,7 @@ async def join_room(sid: str, data: dict[str, Any]) -> None:
         {"count": len(sio_rooms.get(doc_id, set()))},
         room=doc_id,
     )
-    logger.info(f"{sid} joined room {doc_id} ({len(sio_rooms[doc_id])} users)")
+    logger.info("%s joined room %s (%d users)", sid, doc_id, len(sio_rooms[doc_id]))
 
 
 @sio.event
@@ -110,9 +110,8 @@ async def yjs_update(sid: str, data: dict[str, Any]) -> None:
     """
     Handle Yjs CRDT update from client.
     
-    Receives binary Yjs updates, extracts text content,
-    tracks operations for auto-snapshot thresholds,
-    and relays to other clients.
+    Receives binary Yjs updates, tracks operations for auto-snapshot
+    thresholds, and relays updates to other clients.
 
     Args:
         sid: Socket.IO session ID.
@@ -127,7 +126,7 @@ async def yjs_update(sid: str, data: dict[str, Any]) -> None:
         update_bytes = data.get("update")
         
         if not update_bytes:
-            logger.warning(f"Received empty Yjs update from {sid} in {doc_id}")
+            logger.warning("Received empty Yjs update from %s in %s", sid, doc_id)
             return
         
         # Convert update to bytes if needed
@@ -136,10 +135,9 @@ async def yjs_update(sid: str, data: dict[str, Any]) -> None:
         elif not isinstance(update_bytes, bytes):
             update_bytes = bytes(update_bytes)
         
-        logger.debug(f"Received Yjs update: {len(update_bytes)} bytes from {sid} in {doc_id}")
-        
-        # Extract text content from update
-        extracted_text = yjs_parser.extract_text_from_update(update_bytes)
+        logger.debug("Received Yjs update: %d bytes from %s in %s", len(update_bytes), sid, doc_id)
+
+        yjs_parser.apply_binary_update(doc_id, update_bytes)
         
         # Estimate operation count from update size
         op_count = count_operations(update_bytes)
@@ -148,8 +146,7 @@ async def yjs_update(sid: str, data: dict[str, Any]) -> None:
         should_snapshot, reason = tracking_manager.record_operation(doc_id, op_count)
         
         if should_snapshot:
-            logger.info(f"Auto-snapshot triggered for {doc_id}: {reason}")
-            # Snapshot will be created by tasks/snapshot_scheduler.py
+            logger.info("Auto-snapshot triggered for %s: %s", doc_id, reason)
         
         # Relay update to all other clients in room
         await sio.emit(
@@ -164,12 +161,15 @@ async def yjs_update(sid: str, data: dict[str, Any]) -> None:
         )
         
         logger.debug(
-            f"Relayed Yjs update ({len(update_bytes)} bytes, ~{op_count} ops) "
-            f"in {doc_id} from {sid}"
+            "Relayed Yjs update (%d bytes, ~%d ops) in %s from %s",
+            len(update_bytes),
+            op_count,
+            doc_id,
+            sid,
         )
-        
-    except Exception as e:
-        logger.error(f"Error handling yjs_update from {sid}: {e}", exc_info=True)
+
+    except Exception as exc:
+        logger.error("Error handling yjs_update from %s: %s", sid, exc, exc_info=True)
         await sio.emit(
             "error",
             {"message": "Failed to process Yjs update"},
@@ -179,20 +179,9 @@ async def yjs_update(sid: str, data: dict[str, Any]) -> None:
 
 @sio.event
 async def sync_state(sid: str, data: dict[str, Any]) -> None:
-    """
-    Handle full document sync request.
-    
-    Client requests full document state when joining.
-    Currently a placeholder; client-side Yjs handles state reconstruction.
-
-    Args:
-        sid: Socket.IO session ID.
-        data: Message data containing 'doc_id'.
-    """
+    """Log sync-state requests; Yjs handles document state transfer elsewhere."""
     doc_id = data.get("doc_id", "default")
-    logger.info(f"Sync state requested for {doc_id} by {sid}")
-    
-    # Client-side Yjs handles state reconstruction
+    logger.info("Sync state requested for %s by %s", doc_id, sid)
 
 
 def get_combined_app(app):

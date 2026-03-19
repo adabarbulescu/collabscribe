@@ -1,5 +1,5 @@
 """
-Collaborative Markdown Editor - FastAPI Application.
+Collabscribe FastAPI application.
 Clean initialization with all business logic delegated to route modules.
 Includes background snapshot scheduler for automatic document versioning.
 """
@@ -22,7 +22,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
-logger = logging.getLogger("collab.main")
+logger = logging.getLogger("collabscribe.main")
 
 
 @asynccontextmanager
@@ -31,31 +31,29 @@ async def lifespan(app: FastAPI):
     Startup: create pool, schema, and snapshot scheduler.
     Shutdown: stop scheduler and close pool.
     """
-    logger.info("Starting application…")
-    await create_pool()
-    await create_tables(await create_pool())
+    logger.info("Starting application...")
+    pool = await create_pool()
+    await create_tables(pool)
 
-    # Initialize NLP pipeline
     from services.nlp_pipeline import init_nlp
+
     await init_nlp()
     logger.info("NLP pipeline initialized")
 
-    # Start background snapshot scheduler
     scheduler = await get_snapshot_scheduler()
     await scheduler.start()
     logger.info("Snapshot scheduler initialized and running")
 
     yield
 
-    # Shutdown: stop scheduler before closing database
-    logger.info("Shutting down…")
+    logger.info("Shutting down...")
     await scheduler.stop()
     await close_pool()
     logger.info("Application shutdown complete")
 
 
 app = FastAPI(
-    title="Collaborative Markdown Editor",
+    title="Collabscribe",
     version="1.0.0",
     lifespan=lifespan,
 )
@@ -80,6 +78,5 @@ combined_app = get_combined_app(app)
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(combined_app, host="0.0.0.0", port=8000)
-
-

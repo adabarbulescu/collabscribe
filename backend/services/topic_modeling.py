@@ -13,7 +13,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.decomposition import NMF, LatentDirichletAllocation
 
-logger = logging.getLogger("collab.services.topic_modeling")
+logger = logging.getLogger("collabscribe.services.topic_modeling")
 
 
 class TopicModelingService:

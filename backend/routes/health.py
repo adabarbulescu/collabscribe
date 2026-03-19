@@ -1,14 +1,13 @@
-"""
-Health check endpoint.
-"""
+"""Health check endpoint."""
 
 import logging
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 from database import check_connection
 
-logger = logging.getLogger("collab.routes.health")
+logger = logging.getLogger("collabscribe.routes.health")
 
 router = APIRouter()
 
@@ -28,7 +27,10 @@ async def health_check() -> dict[str, str]:
     if not db_ok:
         logger.warning("Database health check failed")
 
-    return {
-        "status": status,
-        "database": "connected" if db_ok else "disconnected",
-    }
+    return JSONResponse(
+        status_code=code,
+        content={
+            "status": status,
+            "database": "connected" if db_ok else "disconnected",
+        },
+    )

@@ -11,7 +11,7 @@ from uuid import UUID, uuid5, NAMESPACE_URL
 
 from asyncpg import Pool
 
-logger = logging.getLogger("collab.services.diff")
+logger = logging.getLogger("collabscribe.services.diff")
 
 
 class DiffService:

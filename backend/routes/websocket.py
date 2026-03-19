@@ -17,7 +17,7 @@ from utils.yjs_parser import (
     SYNC_STEP1, SYNC_STEP2, SYNC_UPDATE,
 )
 
-logger = logging.getLogger("collab.routes.websocket")
+logger = logging.getLogger("collabscribe.routes.websocket")
 
 router = APIRouter()
 

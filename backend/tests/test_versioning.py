@@ -1,13 +1,4 @@
-"""
-Comprehensive test suite for document versioning system.
-Tests unit functionality, integration flows, and concurrency scenarios.
-
-Requires:
-- pytest with pytest-asyncio
-- asyncpg for database testing
-- fastapi TestClient for API testing
-- PostgreSQL test database
-"""
+"""Tests for document versioning behavior."""
 
 import pytest
 import asyncio
@@ -204,7 +195,7 @@ class TestVersioningServiceConcurrency:
             for i in range(10)
         ]
         
-        results = await asyncio.gather(*create_tasks, [retrieve_after_delay()])
+        results = await asyncio.gather(*create_tasks, retrieve_after_delay())
         # Should have created 10 versions successfully
         # Latest version should exist (may be None if called before any creates, but unlikely)
         assert len([r for r in results if isinstance(r, tuple)]) == 10

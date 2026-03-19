@@ -13,7 +13,7 @@ from models.topic import TopicModelingResponse
 from services.analytics import AnalyticsService
 from services.topic_modeling import TopicModelingService
 
-logger = logging.getLogger("collab.routes.analytics")
+logger = logging.getLogger("collabscribe.routes.analytics")
 
 router = APIRouter(prefix="/api/documents", tags=["analytics"])
 
@@ -72,7 +72,7 @@ async def get_document_topics(
     doc_id: str,
     request: AnalyticsRequest,
     n_topics: int = Query(5, ge=2, le=10, description="Number of topics to extract"),
-    method: str = Query("nmf", regex="^(nmf|lda)$", description="Topic modeling method"),
+    method: str = Query("nmf", pattern="^(nmf|lda)$", description="Topic modeling method"),
 ) -> TopicModelingResponse:
     """
     Extract topics from document content using NMF or LDA.

@@ -3,20 +3,20 @@ version: "3.9"
 services:
   db:
     image: postgres:16-alpine
-    container_name: collab_postgres
+    container_name: collabscribe_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-collab_user}
+      POSTGRES_USER: ${POSTGRES_USER:-collabscribe_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_strong_password}
-      POSTGRES_DB: ${POSTGRES_DB:-collab_editor}
+      POSTGRES_DB: ${POSTGRES_DB:-collabscribe}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - collab_net
+      - collabscribe_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-collab_user} -d ${POSTGRES_DB:-collab_editor}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-collabscribe_user} -d ${POSTGRES_DB:-collabscribe}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,14 +26,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: collab_backend
+    container_name: collabscribe_backend
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-collab_user}
+      POSTGRES_USER: ${POSTGRES_USER:-collabscribe_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_strong_password}
-      POSTGRES_DB: ${POSTGRES_DB:-collab_editor}
+      POSTGRES_DB: ${POSTGRES_DB:-collabscribe}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       APP_HOST: 0.0.0.0
@@ -45,13 +45,13 @@ services:
       db:
         condition: service_healthy
     networks:
-      - collab_net
+      - collabscribe_net
 
 volumes:
   pgdata:
-    name: collab_pgdata
+    name: collabscribe_pgdata
 
 networks:
-  collab_net:
-    name: collab_network
+  collabscribe_net:
+    name: collabscribe_network
     driver: bridge

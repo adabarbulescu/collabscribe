@@ -12,7 +12,7 @@ import asyncio
 import logging
 from typing import Optional
 
-logger = logging.getLogger("collab.services.nlp")
+logger = logging.getLogger("collabscribe.services.nlp")
 
 _nlp = None
 
