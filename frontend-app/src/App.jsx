@@ -11,7 +11,9 @@ import { exportAsMarkdown, exportAsPdf, shareDocumentLink } from "./lib/actions"
 import { useAnalytics } from "./lib/useAnalytics";
 import { getDocumentId } from "./lib/document";
 import { useDocumentSession } from "./lib/useDocumentSession";
+import { useInsights } from "./lib/useInsights";
 import { renderPreviewHtml } from "./lib/markdown";
+import { useVersionCompare } from "./lib/useVersionCompare";
 
 const tabs = ["metrics", "analysis", "insights", "compare"];
 
@@ -35,7 +37,7 @@ $$
 - Editor and preview migrated
 - Versioning and session status are wired to the backend
 - Monaco and Yjs collaboration are now in React
-- Analytics and compare flows are next
+- Analytics, insights, and compare are now in React
 `;
 
 export default function App() {
@@ -50,6 +52,8 @@ export default function App() {
   const docId = useMemo(() => getDocumentId(window.location.pathname), []);
   const previewHtml = useMemo(() => renderPreviewHtml(content), [content]);
   const analytics = useAnalytics({ content, docId, onToast: setToast });
+  const insights = useInsights({ docId, active: activeTab === "insights", onToast: setToast });
+  const compare = useVersionCompare({ docId, active: activeTab === "compare", onToast: setToast });
 
   const { isSaving, lastSaveLabel, noteSavedAt, saveVersion } = useDocumentSession({
     content,
@@ -103,6 +107,8 @@ export default function App() {
         <AnalyticsSidebar
           activeTab={activeTab}
           analytics={analytics}
+          compare={compare}
+          insights={insights}
           isOpen={sidebarOpen}
           tabs={tabs}
           onClose={() => setSidebarOpen(false)}

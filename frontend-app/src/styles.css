@@ -508,6 +508,132 @@ pre {
   line-height: 1.65;
 }
 
+.analytics-chart-card,
+.analytics-select-card,
+.analytics-diff-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.analytics-chart-card {
+  padding: 14px;
+}
+
+.analytics-chart {
+  display: block;
+  width: 100%;
+  height: 140px;
+}
+
+.analytics-chart-card__footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.analytics-version-row,
+.analytics-delta-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.analytics-version-row + .analytics-version-row,
+.analytics-delta-row + .analytics-delta-row {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.analytics-version-row__meta {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.analytics-version-row__stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.analytics-select-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.analytics-select-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  color: var(--muted);
+}
+
+.analytics-select-card select {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(9, 12, 18, 0.9);
+  color: var(--text);
+  padding: 10px 12px;
+}
+
+.analytics-delta-row__badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.analytics-delta-row__badge.is-up {
+  background: rgba(78, 201, 176, 0.16);
+  color: var(--success);
+}
+
+.analytics-delta-row__badge.is-down {
+  background: rgba(241, 100, 100, 0.16);
+  color: var(--danger);
+}
+
+.analytics-delta-row__badge.is-neutral {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+}
+
+.analytics-diff-card {
+  padding: 16px;
+  line-height: 1.8;
+}
+
+.analytics-diff-card__empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.analytics-diff-chunk--equal {
+  color: var(--muted);
+}
+
+.analytics-diff-chunk--insert {
+  background: rgba(78, 201, 176, 0.18);
+  color: #c9fff3;
+}
+
+.analytics-diff-chunk--delete {
+  background: rgba(241, 100, 100, 0.18);
+  color: #ffd3d3;
+  text-decoration: line-through;
+}
+
 .toast {
   position: fixed;
   right: 20px;
@@ -578,5 +704,9 @@ pre {
 
   .toolbar__identity {
     width: 100%;
+  }
+
+  .analytics-select-grid {
+    grid-template-columns: 1fr;
   }
 }
