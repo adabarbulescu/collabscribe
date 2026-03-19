@@ -368,6 +368,7 @@ pre {
 
 .analytics-panel {
   padding: 20px;
+  overflow: auto;
 }
 
 .analytics-panel__label {
@@ -377,6 +378,124 @@ pre {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.analytics-panel__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.analytics-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.analytics-metric-card {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.analytics-metric-card__label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.analytics-metric-card__value {
+  margin-top: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.analytics-metric-card__subvalue {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.analytics-detail-card,
+.analytics-list-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.analytics-detail-card__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.analytics-detail-card__row + .analytics-detail-card__row {
+  margin-top: 10px;
+}
+
+.analytics-detail-card__row--muted {
+  color: var(--muted);
+}
+
+.analytics-detail-card__text {
+  margin: 14px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.analytics-progress {
+  margin-top: 14px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.analytics-progress__bar {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.analytics-progress__bar--green {
+  background: var(--success);
+}
+
+.analytics-progress__bar--yellow {
+  background: #d5bf52;
+}
+
+.analytics-progress__bar--red {
+  background: var(--danger);
+}
+
+.analytics-list-card__group + .analytics-list-card__group {
+  margin-top: 14px;
+}
+
+.analytics-list-card__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.analytics-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.analytics-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(95, 168, 255, 0.12);
+  color: var(--text);
+  font-size: 0.78rem;
 }
 
 .analytics-placeholder-card {

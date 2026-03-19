@@ -8,6 +8,7 @@ import Toast from "./components/Toast";
 import Toolbar from "./components/Toolbar";
 import Workspace from "./components/Workspace";
 import { exportAsMarkdown, exportAsPdf, shareDocumentLink } from "./lib/actions";
+import { useAnalytics } from "./lib/useAnalytics";
 import { getDocumentId } from "./lib/document";
 import { useDocumentSession } from "./lib/useDocumentSession";
 import { renderPreviewHtml } from "./lib/markdown";
@@ -48,6 +49,7 @@ export default function App() {
 
   const docId = useMemo(() => getDocumentId(window.location.pathname), []);
   const previewHtml = useMemo(() => renderPreviewHtml(content), [content]);
+  const analytics = useAnalytics({ content, docId, onToast: setToast });
 
   const { isSaving, lastSaveLabel, noteSavedAt, saveVersion } = useDocumentSession({
     content,
@@ -100,6 +102,7 @@ export default function App() {
         />
         <AnalyticsSidebar
           activeTab={activeTab}
+          analytics={analytics}
           isOpen={sidebarOpen}
           tabs={tabs}
           onClose={() => setSidebarOpen(false)}
