@@ -121,6 +121,10 @@ pre {
   background: var(--danger);
 }
 
+.connection-status__dot.is-connected {
+  background: var(--success);
+}
+
 .toolbar__button {
   border: 1px solid transparent;
   border-radius: 10px;
@@ -137,6 +141,11 @@ pre {
   background: rgba(255, 255, 255, 0.03);
   border-color: var(--border);
   color: var(--text);
+}
+
+.toolbar__button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .mobile-toggle {
@@ -389,6 +398,29 @@ pre {
   margin: 0;
   color: var(--muted);
   line-height: 1.65;
+}
+
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  min-width: 220px;
+  max-width: min(420px, calc(100vw - 40px));
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(14, 18, 25, 0.96);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (max-width: 1040px) {
