@@ -14,16 +14,13 @@ logger = logging.getLogger("collabscribe.routes.documents")
 router = APIRouter()
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-LEGACY_FRONTEND_DIR = PROJECT_ROOT / "frontend"
 REACT_FRONTEND_DIST_DIR = PROJECT_ROOT / "frontend-app" / "dist"
+REACT_FRONTEND_INDEX = REACT_FRONTEND_DIST_DIR / "index.html"
 
 
 def _get_frontend_entrypoint() -> Path:
-    """Prefer the built React app when it exists; otherwise fall back to the legacy frontend."""
-    react_index = REACT_FRONTEND_DIST_DIR / "index.html"
-    if react_index.exists():
-        return react_index
-    return LEGACY_FRONTEND_DIR / "index.html"
+    """Return the built React app entrypoint."""
+    return REACT_FRONTEND_INDEX
 
 
 @router.get("/")

@@ -232,6 +232,7 @@ pre {
 }
 
 .editor-surface,
+.editor-loading-card,
 .preview-card,
 .analytics-placeholder-card {
   border: 1px solid var(--border);
@@ -244,6 +245,21 @@ pre {
   width: 100%;
   min-height: 0;
   overflow: hidden;
+}
+
+.editor-loading-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px;
+  padding: 24px;
+  color: var(--muted);
+}
+
+.editor-loading-card strong {
+  color: var(--text);
 }
 
 .preview-card {

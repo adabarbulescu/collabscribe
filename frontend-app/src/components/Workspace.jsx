@@ -1,4 +1,6 @@
-import CollaborativeEditor from "./CollaborativeEditor";
+import { Suspense, lazy } from "react";
+
+const CollaborativeEditor = lazy(() => import("./CollaborativeEditor"));
 
 export default function Workspace({
   content,
@@ -26,15 +28,24 @@ export default function Workspace({
           <span className="pane__badge">Monaco + Yjs</span>
         </div>
         <div className="pane__body pane__body--editor">
-          <CollaborativeEditor
-            docId={docId}
-            initialContent={content}
-            onConnectionStatusChange={onConnectionStatusChange}
-            onContentChange={onChangeContent}
-            onLastSaveAt={onLastSaveAt}
-            onToast={onToast}
-            onUserCountChange={onUserCountChange}
-          />
+          <Suspense
+            fallback={
+              <div className="editor-loading-card">
+                <strong>Loading editor...</strong>
+                <span>Monaco and collaboration services are initializing.</span>
+              </div>
+            }
+          >
+            <CollaborativeEditor
+              docId={docId}
+              initialContent={content}
+              onConnectionStatusChange={onConnectionStatusChange}
+              onContentChange={onChangeContent}
+              onLastSaveAt={onLastSaveAt}
+              onToast={onToast}
+              onUserCountChange={onUserCountChange}
+            />
+          </Suspense>
         </div>
       </section>
 

@@ -1,3 +1,13 @@
+FROM node:20-alpine AS frontend-build
+
+WORKDIR /app/frontend-app
+
+COPY frontend-app/package.json ./
+RUN npm install
+
+COPY frontend-app/ ./
+RUN npm run build
+
 FROM python:3.12-slim
 
 # Prevent Python from writing .pyc files and enable unbuffered output
@@ -23,7 +33,8 @@ RUN python -c "import nltk; nltk.download('punkt_tab', quiet=True); nltk.downloa
 
 # Copy application code
 COPY backend/ ./backend/
-COPY frontend/ ./frontend/
+COPY --from=frontend-build /app/frontend-app/dist ./frontend-app/dist
+COPY frontend-app/package.json ./frontend-app/package.json
 
 WORKDIR /app/backend
 
