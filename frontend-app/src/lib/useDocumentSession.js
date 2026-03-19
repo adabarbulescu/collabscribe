@@ -14,50 +14,9 @@ function formatLastSaveLabel(timestamp) {
   })}`;
 }
 
-export function useDocumentSession({ content, docId, onRestoreContent, onToast }) {
-  const [connectionStatus, setConnectionStatus] = useState("disconnected");
+export function useDocumentSession({ content, docId, onToast }) {
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaveAt, setLastSaveAt] = useState(null);
-  const [userCount, setUserCount] = useState(1);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function restoreLatestVersion() {
-      try {
-        const response = await fetch(`/api/documents/${docId}/versions/latest`);
-        if (response.status === 404) {
-          return;
-        }
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (!isMounted) {
-          return;
-        }
-
-        if (data.created_at) {
-          setLastSaveAt(data.created_at);
-        }
-
-        if (data.content && data.content.trim().length > 0) {
-          onRestoreContent(data.content);
-        }
-      } catch (error) {
-        if (isMounted) {
-          onToast("Could not load the latest saved version.");
-        }
-      }
-    }
-
-    restoreLatestVersion();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [docId, onRestoreContent, onToast]);
 
   useEffect(() => {
     const socket = io({
@@ -65,16 +24,7 @@ export function useDocumentSession({ content, docId, onRestoreContent, onToast }
     });
 
     socket.on("connect", () => {
-      setConnectionStatus("connected");
       socket.emit("join_room", { doc_id: docId });
-    });
-
-    socket.on("disconnect", () => {
-      setConnectionStatus("disconnected");
-    });
-
-    socket.on("user_count", (data) => {
-      setUserCount(data?.count ?? 1);
     });
 
     socket.on("autosave", (data) => {
@@ -89,6 +39,10 @@ export function useDocumentSession({ content, docId, onRestoreContent, onToast }
       socket.disconnect();
     };
   }, [docId, onToast]);
+
+  function noteSavedAt(timestamp) {
+    setLastSaveAt(timestamp);
+  }
 
   async function saveVersion() {
     if (isSaving) {
@@ -117,7 +71,7 @@ export function useDocumentSession({ content, docId, onRestoreContent, onToast }
       }
 
       const timestamp = data.created_at ?? new Date().toISOString();
-      setLastSaveAt(timestamp);
+      noteSavedAt(timestamp);
       onToast(`Version ${data.version_number} saved.`);
     } catch (error) {
       onToast(`Save failed: ${error.message}`);
@@ -127,10 +81,9 @@ export function useDocumentSession({ content, docId, onRestoreContent, onToast }
   }
 
   return {
-    connectionStatus,
     isSaving,
     lastSaveLabel: isSaving ? "Saving..." : formatLastSaveLabel(lastSaveAt),
-    saveVersion,
-    userCount
+    noteSavedAt,
+    saveVersion
   };
 }

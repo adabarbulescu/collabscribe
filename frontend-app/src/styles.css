@@ -231,7 +231,7 @@ pre {
   padding: 0;
 }
 
-.editor-textarea,
+.editor-surface,
 .preview-card,
 .analytics-placeholder-card {
   border: 1px solid var(--border);
@@ -240,21 +240,10 @@ pre {
   box-shadow: var(--shadow);
 }
 
-.editor-textarea {
+.editor-surface {
   width: 100%;
-  min-height: 100%;
-  padding: 24px;
-  border: 0;
-  border-radius: 0;
-  background: linear-gradient(180deg, rgba(18, 22, 29, 0.95), rgba(22, 27, 35, 0.95));
-  color: var(--text);
-  line-height: 1.65;
-  resize: none;
-  outline: none;
-}
-
-.editor-textarea::placeholder {
-  color: var(--muted);
+  min-height: 0;
+  overflow: hidden;
 }
 
 .preview-card {

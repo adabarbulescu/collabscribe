@@ -1,7 +1,14 @@
+import CollaborativeEditor from "./CollaborativeEditor";
+
 export default function Workspace({
   content,
+  docId,
   mobileView,
   onChangeContent,
+  onConnectionStatusChange,
+  onLastSaveAt,
+  onToast,
+  onUserCountChange,
   previewHtml
 }) {
   const editorHidden = mobileView === "preview";
@@ -16,18 +23,17 @@ export default function Workspace({
       >
         <div className="pane__header">
           <span>Editor</span>
-          <span className="pane__badge">Textarea for now</span>
+          <span className="pane__badge">Monaco + Yjs</span>
         </div>
         <div className="pane__body pane__body--editor">
-          <label className="sr-only" htmlFor="markdown-editor">
-            Markdown editor
-          </label>
-          <textarea
-            id="markdown-editor"
-            className="editor-textarea"
-            value={content}
-            onChange={(event) => onChangeContent(event.target.value)}
-            spellCheck={false}
+          <CollaborativeEditor
+            docId={docId}
+            initialContent={content}
+            onConnectionStatusChange={onConnectionStatusChange}
+            onContentChange={onChangeContent}
+            onLastSaveAt={onLastSaveAt}
+            onToast={onToast}
+            onUserCountChange={onUserCountChange}
           />
         </div>
       </section>

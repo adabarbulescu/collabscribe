@@ -32,8 +32,9 @@ $$
 
 - App shell migrated
 - Editor and preview migrated
-- Versioning and session status are now wired to the backend
-- Monaco, Yjs syncing, analytics, and compare flows are next
+- Versioning and session status are wired to the backend
+- Monaco and Yjs collaboration are now in React
+- Analytics and compare flows are next
 `;
 
 export default function App() {
@@ -42,20 +43,15 @@ export default function App() {
   const [mobileView, setMobileView] = useState("split");
   const [content, setContent] = useState(initialDocument);
   const [toast, setToast] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState("disconnected");
+  const [userCount, setUserCount] = useState(1);
 
   const docId = useMemo(() => getDocumentId(window.location.pathname), []);
   const previewHtml = useMemo(() => renderPreviewHtml(content), [content]);
 
-  const {
-    connectionStatus,
-    isSaving,
-    lastSaveLabel,
-    saveVersion,
-    userCount
-  } = useDocumentSession({
+  const { isSaving, lastSaveLabel, noteSavedAt, saveVersion } = useDocumentSession({
     content,
     docId,
-    onRestoreContent: setContent,
     onToast: setToast
   });
 
@@ -93,8 +89,13 @@ export default function App() {
       <div className="workspace-frame">
         <Workspace
           content={content}
+          docId={docId}
           mobileView={mobileView}
           onChangeContent={setContent}
+          onConnectionStatusChange={setConnectionStatus}
+          onLastSaveAt={noteSavedAt}
+          onToast={setToast}
+          onUserCountChange={setUserCount}
           previewHtml={previewHtml}
         />
         <AnalyticsSidebar
